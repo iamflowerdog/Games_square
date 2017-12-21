@@ -1,3 +1,23 @@
+
+
+
+## 技术栈
+
+* react 16.2
+* react-create-app 
+
+#### 启动方法
+
+* 下载源码到本地
+* npm install 
+* npn start 
+* 浏览器里输入： `http://localhost:3000/`
+
+
+
+
+
+
 #### react 建议不改变组件中的数据值的索引，
 
 * Data change with mutation
