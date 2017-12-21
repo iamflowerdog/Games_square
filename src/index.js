@@ -19,65 +19,18 @@ function Square(props) {
 }
 
 class Board extends React.Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            squares: new Array(9).fill(null),
-            xIsNext: true,
-        };
-    }
     renderSquare(i) {
-        return <Square value={this.state.squares[i]} onClick={() => this.handleClick(i)}/>;
+        return <Square
+            value={this.props.squares[i]}
+            onClick={() => this.props.onClick(i)}
+        />;
     }
 
-    handleClick(i){
 
-        console.log(classNames('foo', {bar: true}));
-
-
-        // React 官方建议不改变原始的数据指针
-        const squares = this.state.squares.slice();
-
-
-
-
-
-
-        /*
-        * 1. squares[i] 已经被点击过的 squares 数组里面，会被填充一个 'X' 或者 'O'，
-        *    squares[i] = 'X' 或者 'O'，默认的 squares[i] = null;
-        *
-        * 2. 通过 calculateWinner 函数 如果有人已经获胜，也会 return
-        * */
-        if (squares[i] || calculateWinner(squares)){
-            return;
-        }
-
-        squares[i] = this.state.xIsNext ? 'X' : 'O';
-        this.setState({
-            squares: squares,
-            xIsNext: !this.state.xIsNext,
-        })
-    }
 
     render() {
-        // const status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-
-        let titleClass = classNames('status', {'winner': false});
-
-        const winner = calculateWinner(this.state.squares);
-        let status;
-
-        if(winner){
-            status = 'Winner: ' + winner;
-            titleClass = classNames('status', {'winner': true});
-        } else {
-            status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-        }
-
         return (
             <div>
-                <div className={titleClass}>{status}</div>
                 <div className="board-row">
                     {this.renderSquare(0)}
                     {this.renderSquare(1)}
@@ -99,14 +52,66 @@ class Board extends React.Component {
 }
 
 class Game extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            history: [{
+                squares: new Array(9).fill(null)
+            }],
+            xIsNext: true
+        };
+    }
+
+    handleClick(i){
+
+        const history = this.state.history;
+        const current = history[history.length - 1];
+        // React 官方建议不改变原始的数据指针
+        const squares = current.squares.slice();
+
+        /*
+         * 1. squares[i] 已经被点击过的 squares 数组里面，会被填充一个 'X' 或者 'O'，
+         *    squares[i] = 'X' 或者 'O'，默认的 squares[i] = null;
+         *
+         * 2. 通过 calculateWinner 函数 如果有人已经获胜，也会 return
+         * */
+        if (squares[i] || calculateWinner(squares)){
+            return;
+        }
+
+        squares[i] = this.state.xIsNext ? 'X' : 'O';
+        this.setState({
+            history: history.concat([{
+                squares: squares
+            }]),
+            xIsNext: !this.state.xIsNext,
+        })
+    }
+
     render() {
+        const history = this.state.history;
+        const current = history[history.length - 1];
+        const winner = calculateWinner(current.squares);
+
+        let titleClass = classNames('status', {'winner': false});
+
+        let status;
+        if (winner) {
+            status = 'Winner: ' + winner;
+            titleClass = classNames('status', {'winner': true});
+        } else {
+            status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+        }
         return (
             <div className="game">
                 <div className="game-board">
-                    <Board />
+                    <Board
+                        squares={current.squares}
+                        onClick={(i) => this.handleClick(i)}
+                    />
                 </div>
                 <div className="game-info">
-                    <div>{/* status */}</div>
+                    <div className={titleClass}> {status} </div>
                     <ol>{/* TODO */}</ol>
                 </div>
             </div>
