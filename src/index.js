@@ -69,6 +69,8 @@ class Game extends React.Component {
         // React 官方建议不改变原始的数据指针
         const squares = current.squares.slice();
 
+
+
         /*
          * 1. squares[i] 已经被点击过的 squares 数组里面，会被填充一个 'X' 或者 'O'，
          *    squares[i] = 'X' 或者 'O'，默认的 squares[i] = null;
@@ -93,6 +95,17 @@ class Game extends React.Component {
         const current = history[history.length - 1];
         const winner = calculateWinner(current.squares);
 
+        const moves = history.map((step, move) => {
+            const desc = move ?
+                'Go to move #' + move :
+                'Go to game start';
+            return (
+                <li key={move}>
+                    <button onClick={() => this.jumpTo(move)}>{desc}</button>
+                </li>
+            )
+        });
+
         let titleClass = classNames('status', {'winner': false});
 
         let status;
@@ -112,7 +125,7 @@ class Game extends React.Component {
                 </div>
                 <div className="game-info">
                     <div className={titleClass}> {status} </div>
-                    <ol>{/* TODO */}</ol>
+                    <ol>{moves}</ol>
                 </div>
             </div>
         );
