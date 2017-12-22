@@ -107,7 +107,9 @@ the database ID is usually a good choice:
 
 ```
     
+#### 不一定全局唯一
 
+* `Component keys don’t need to be globally unique, only unique relative to the immediate siblings.`
 
 
 

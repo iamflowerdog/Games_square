@@ -58,13 +58,15 @@ class Game extends React.Component {
             history: [{
                 squares: new Array(9).fill(null)
             }],
-            xIsNext: true
+            xIsNext: true,
+            stepNumber: 0,
         };
     }
 
     handleClick(i){
 
-        const history = this.state.history;
+
+        const history = this.state.history.slice(0, this.state.stepNumber + 1);
         const current = history[history.length - 1];
         // React 官方建议不改变原始的数据指针
         const squares = current.squares.slice();
@@ -87,12 +89,22 @@ class Game extends React.Component {
                 squares: squares
             }]),
             xIsNext: !this.state.xIsNext,
+            stepNumber: history.length,
         })
+    }
+
+    jumpTo(step){
+        console.log(step, this.state.history);
+
+        this.setState({
+            stepNumber: step,
+            xIsNext: (step % 2) === 0,
+        });
     }
 
     render() {
         const history = this.state.history;
-        const current = history[history.length - 1];
+        const current = history[this.state.stepNumber];
         const winner = calculateWinner(current.squares);
 
         const moves = history.map((step, move) => {
@@ -115,6 +127,7 @@ class Game extends React.Component {
         } else {
             status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
         }
+
         return (
             <div className="game">
                 <div className="game-board">
